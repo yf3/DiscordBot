@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import guild
 from decouple import config
 
 intents = discord.Intents.all()
@@ -18,5 +19,11 @@ async def on_command_error(ctx, error):
 @bot.command()
 async def kick(ctx):
     await ctx.send(content='kick?!')
+
+@bot.command()
+async def newChannel(ctx, channel_name):
+    current_guild = ctx.message.guild
+    await ctx.send(f'{channel_name} successfully created!')
+    await current_guild.create_text_channel(channel_name)
 
 bot.run(config('DISCORD_BOT_TOKEN'))
