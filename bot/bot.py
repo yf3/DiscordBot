@@ -1,7 +1,7 @@
 import asyncio
+from pathlib import Path
 import discord
 from discord.ext import commands, tasks
-from discord.ext.commands import has_permissions
 from decouple import config
 
 class MyBot(commands.Bot):
@@ -27,42 +27,6 @@ class MyBot(commands.Bot):
 intents = discord.Intents.all()
 bot = MyBot(command_prefix='!', intents=intents)
 
-class Interactions(commands.Cog):
-    def __init__(self, bot) -> None:
-        self.bot = bot
-    
-    @commands.command()
-    async def echo(self, ctx, message_content):
-        await ctx.send(f'{ctx.author}:{message_content}')
-
-    async def cog_command_error(self, ctx, error: Exception) -> None:
-        if isinstance(error, commands.MissingRequiredArgument):
-            correct_usage = f'{bot.command_prefix}{ctx.command.name} {ctx.command.signature}'
-            await ctx.send(f'{error} \ncorrect usage: {correct_usage}')
-
-class MemberManagement(commands.Cog):
-    def __init__(self, bot) -> None:
-        self.bot = bot
-    
-    @commands.command()
-    @has_permissions(kick_members=True)
-    async def kick(self, ctx, member: discord.Member, *, reason=None):
-        await member.kick(reason=reason)
-        await ctx.send(f'Bye {member} lol')  
-
-# @bot.command()
-# @has_permissions(kick_members=True)
-# async def kick(ctx, member: discord.Member, *, reason=None):
-#     await member.kick(reason=reason)
-#     await ctx.send(f'Bye {member} lol')
-
-# @kick.error
-# async def kick_error(ctx, error):
-#     if isinstance(error, commands.MissingPermissions):
-#         await ctx.send(f'{ctx.author} has no permission to kick member!')
-#     elif isinstance(error, commands.MissingRequiredArgument):
-#         await ctx.send('Kick who?')
-
 @bot.command()
 async def newchannel(ctx, channel_name=None):
     current_guild = ctx.guild
@@ -77,8 +41,10 @@ async def on_command_error(ctx, error):
         await ctx.send(error)
 
 async def add_cogs():
-    await bot.add_cog(Interactions(bot))
-    await bot.add_cog(MemberManagement(bot))
+    # await bot.add_cog(Interactions(bot))
+    # await bot.add_cog(MemberManagement(bot))
+    for cog in [p.stem for p in Path('.').glob('*/Cogs/*.py')]:
+        await bot.load_extension(f'Cogs.{cog}')
 
 async def main():
     await add_cogs()
