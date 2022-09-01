@@ -7,13 +7,14 @@ from decouple import config
 intents = discord.Intents.all()
 
 class MyBot(commands.Bot):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
     
     async def setup_hook(self) -> None:
         self.predefined_task.start()
+        # self.loop.create_task(self.predefined_task()) # unable to find broadcast channel
 
-    @tasks.loop(seconds=3.0, count=5)
+    @tasks.loop(seconds=1.0, count=2)
     async def predefined_task(self):
         target_channel = discord.utils.get(self.get_all_channels(), guild__name='forTestingOnly', name='forbroadcast')
         if target_channel is None:
@@ -27,14 +28,13 @@ class MyBot(commands.Bot):
 
 bot = MyBot(command_prefix='!', intents=intents)
 
-@bot.command()
-async def echo(ctx, message_content): # ctx:commands.context
-    await ctx.send(f'{ctx.author}:{message_content}')
-
-@echo.error
-async def echo_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f'No message to echo!')
+class Interactions(commands.Cog):
+    def __init__(self, bot) -> None:
+        self.bot = bot
+    
+    @commands.command()
+    async def echo(self, ctx, message_content):
+        await ctx.send(f'{ctx.author}:{message_content}')
 
 @bot.command()
 @has_permissions(kick_members=True)
@@ -60,8 +60,15 @@ async def newchannel(ctx, channel_name=None):
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.send(f'No such command: {ctx.message.content}')
-    await ctx.send(f'correct usage: {ctx.command.signature}')
+        await ctx.send(error)
+    await ctx.send(f'{error} \ncorrect usage: {bot.command_prefix}{ctx.command.name} {ctx.command.signature}')
 
+async def add_cogs():
+    await bot.add_cog(Interactions(bot))
 
-bot.run(config('DISCORD_BOT_TOKEN'))
+async def main():
+    await add_cogs()
+    await bot.start(config('DISCORD_BOT_TOKEN'))
+
+if __name__== '__main__':
+    asyncio.run(main())
