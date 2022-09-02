@@ -24,31 +24,22 @@ class MyBot(commands.Bot):
     async def before_my_task(self):
         await self.wait_until_ready()
 
-intents = discord.Intents.all()
-bot = MyBot(command_prefix='!', intents=intents)
-
-@bot.command()
-async def newchannel(ctx, channel_name=None):
-    current_guild = ctx.guild
-    if channel_name is None:
-        channel_name = "new-channel"
-    await ctx.send(f'{channel_name} successfully created!')
-    await current_guild.create_text_channel(channel_name)
-
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send(error)
+    async def on_command_error(self, ctx, error, /) -> None:
+        if isinstance(error, commands.CommandNotFound):
+            await ctx.send(error)
 
 async def add_cogs():
-    # await bot.add_cog(Interactions(bot))
-    # await bot.add_cog(MemberManagement(bot))
     for cog in [p.stem for p in Path('.').glob('*/Cogs/*.py')]:
-        await bot.load_extension(f'Cogs.{cog}')
+        try:
+            await bot.load_extension(f'Cogs.{cog}')
+        except commands.NoEntryPointError:
+            continue
 
 async def main():
     await add_cogs()
     await bot.start(config('DISCORD_BOT_TOKEN'))
 
 if __name__== '__main__':
+    intents = discord.Intents.all()
+    bot = MyBot(command_prefix='!', intents=intents)
     asyncio.run(main())

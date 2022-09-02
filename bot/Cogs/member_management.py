@@ -11,6 +11,12 @@ class MemberManagement(commands.Cog):
     async def kick(self, ctx, member: Member, *, reason=None):
         await member.kick(reason=reason)
         await ctx.send(f'{member} is out!')
+    
+    @commands.command()
+    @has_permissions(ban_members=True)
+    async def ban(self, ctx, member: Member, *, reason=None):
+        await member.ban(reason=reason)
+        await ctx.send(f'{member} is banned!')
 
     async def cog_command_error(self, ctx, error: Exception) -> None:
         if isinstance(error, commands.MissingPermissions):
