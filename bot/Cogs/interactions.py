@@ -13,13 +13,8 @@ class Interactions(commands.Cog):
         current_guild = ctx.guild
         if channel_name is None:
             channel_name = "new-channel"
-        await ctx.send(f'{channel_name} successfully created!')
+        await ctx.send(f'Textchannel {channel_name} successfully created!')
         await current_guild.create_text_channel(channel_name)
-
-    async def cog_command_error(self, ctx, error: Exception) -> None:
-        if isinstance(error, commands.MissingRequiredArgument):
-            correct_usage = f'{self.bot.command_prefix}{ctx.command.name} {ctx.command.signature}'
-            await ctx.send(f'correct usage: {correct_usage}')
 
 async def setup(bot):
     await bot.add_cog(Interactions(bot))

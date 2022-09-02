@@ -21,8 +21,6 @@ class MemberManagement(commands.Cog):
     async def cog_command_error(self, ctx, error: Exception) -> None:
         if isinstance(error, commands.MissingPermissions):
             await ctx.send(f'{ctx.author} has no permission to {ctx.command.name} member!')
-        elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(f'{ctx.command.name} who?')
 
 async def setup(bot):
     await bot.add_cog(MemberManagement(bot))
