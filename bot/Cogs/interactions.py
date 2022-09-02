@@ -19,7 +19,7 @@ class Interactions(commands.Cog):
     async def cog_command_error(self, ctx, error: Exception) -> None:
         if isinstance(error, commands.MissingRequiredArgument):
             correct_usage = f'{self.bot.command_prefix}{ctx.command.name} {ctx.command.signature}'
-            await ctx.send(f'{error} \ncorrect usage: {correct_usage}')
+            await ctx.send(f'correct usage: {correct_usage}')
 
 async def setup(bot):
     await bot.add_cog(Interactions(bot))

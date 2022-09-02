@@ -16,7 +16,7 @@ class MyBot(commands.Bot):
     async def broadcasting_task(self):
         target_channel = discord.utils.get(self.get_all_channels(), guild__name='forTestingOnly', name='forbroadcast')
         if target_channel is None:
-            print('Not found\n')
+            print('Not found')
         else:
             await target_channel.send('broadcasting')
 
@@ -25,8 +25,7 @@ class MyBot(commands.Bot):
         await self.wait_until_ready()
 
     async def on_command_error(self, ctx, error, /) -> None:
-        if isinstance(error, commands.CommandNotFound):
-            await ctx.send(error)
+        await ctx.send(error)
 
 async def add_cogs():
     for cog in [p.stem for p in Path('.').glob('*/Cogs/*.py')]:
