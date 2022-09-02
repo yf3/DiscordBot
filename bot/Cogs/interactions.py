@@ -3,7 +3,7 @@ from discord.ext import commands
 class Interactions(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-    
+
     @commands.command()
     async def echo(self, ctx, message_content):
         await ctx.send(f'{ctx.author}:{message_content}')

@@ -5,13 +5,13 @@ from discord import Member
 class MemberManagement(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
-    
+
     @commands.command()
     @has_permissions(kick_members=True)
     async def kick(self, ctx, member: Member, *, reason=None):
         await member.kick(reason=reason)
         await ctx.send(f'{member} is out!')
-    
+
     @commands.command()
     @has_permissions(ban_members=True)
     async def ban(self, ctx, member: Member, *, reason=None):

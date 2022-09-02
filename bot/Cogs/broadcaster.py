@@ -41,7 +41,13 @@ class Broadcaster(commands.Cog):
         self.text_message = args
         if self.text_message is not None:
             await ctx.send('Successfully set broadcast message.')
-    
+
+    @commands.command()
+    @has_permissions(manage_guild=True)
+    async def bdtime(self, ctx, std_cron_expression):
+        # TODO: validate cron expression
+        pass
+
     @commands.command()
     @has_permissions(manage_guild=True)
     async def bdstart(self, ctx):

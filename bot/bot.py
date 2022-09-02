@@ -1,8 +1,8 @@
-import asyncio
-from pathlib import Path
 import discord
 from discord.ext import commands
 from decouple import config
+from pathlib import Path
+import asyncio
 
 class MyBot(commands.Bot):
     def __init__(self, *args, **kwargs) -> None:
