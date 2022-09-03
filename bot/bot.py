@@ -31,5 +31,7 @@ async def main():
 
 if __name__== '__main__':
     intents = discord.Intents.all()
+    intents.presences = False
+    intents.typing = False
     bot = MyBot(command_prefix='!', intents=intents)
     asyncio.run(main())
