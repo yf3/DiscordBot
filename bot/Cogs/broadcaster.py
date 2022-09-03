@@ -1,5 +1,5 @@
 '''
-Current version the bot only have one broadcast job.
+Current version the bot can only have one broadcast job.
 '''
 from discord import utils
 from discord.ext import commands
@@ -8,8 +8,10 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from cron_validator import CronValidator
 
-class Broadcaster(commands.Cog, description='This category requires the manage guild permission to use.\n\n\
-Use bcset to select target channel and bctext to set broadcast message before using bcstart to start the broadcasting routine.\n\n\
+class Broadcaster(commands.Cog, description=
+'This category requires the manage_guild permission to use.\n\n\
+Use bcset to select target channel and bctext to set broadcast \
+message before using bcstart to start the broadcasting routine.\n\n\
 Default broadcast routine is 00:00 everyday, use bctime if you want to modify the schedule.\n\n\
 If a broadcast is already running, use bcstop then bdstart to apply the changes.'):
     def __init__(self, bot) -> None:
@@ -31,7 +33,7 @@ If a broadcast is already running, use bcstop then bdstart to apply the changes.
         self.scheduler.add_job(self.do_broadcast, CronTrigger.from_crontab(cron_exp))
         self.scheduler.start()
 
-    @commands.command(description='If target_guild_name is not given, will choose the current guild.')
+    @commands.command(description='If target_guild_name is not given, it will choose the current guild.')
     @has_permissions(manage_guild=True)
     async def bcset(self, ctx,
                      target_channel_name: str = commands.parameter(description=' '),
@@ -68,7 +70,7 @@ If a broadcast is already running, use bcstop then bdstart to apply the changes.
     @has_permissions(manage_guild=True)
     async def bcstart(self, ctx):
         if self.target_channel is None or self.text_message is None:
-            await ctx.reply('Broadcast target/message not set yet!')
+            await ctx.reply('Broadcast target/message not set yet!\nUse \"!help Broadcaster\" for information.')
         else:
             if self.scheduler.running:
                 await ctx.reply('Use !bdstop to shutdown current broadcast first.')

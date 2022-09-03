@@ -8,8 +8,8 @@ class Interactions(commands.Cog):
     async def echo(self, ctx, message_content: str = commands.parameter(description=' - Any text')):
         await ctx.send(f'{ctx.author}:{message_content}')
 
-    @commands.command(description='Add a new text channel to current guild. \
-the channel_name will be new-channel if not given.')
+    @commands.command(description=
+    'Add a new text channel to current guild. The channel_name will be \"new-channel\" if not given.')
     async def newchannel(self, ctx, channel_name: str = commands.parameter(default=None, description=' ')):
         current_guild = ctx.guild
         if channel_name is None:
