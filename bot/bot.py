@@ -9,12 +9,11 @@ class MyBot(commands.Bot):
         super().__init__(*args, **kwargs)
 
     async def on_ready(self):
-        await self.tree.sync()
         print('Bot ready.')
 
-    async def on_command_error(self, ctx, error, /) -> None:
+    async def on_command_error(self, ctx, error: Exception, /) -> None:
         await ctx.reply(error)
-        print(error)
+        print(error.__class__)
         if isinstance(error, commands.MissingRequiredArgument):
             correct_usage = f'{self.command_prefix}{ctx.command.name} {ctx.command.signature}'
             await ctx.reply(f'correct usage: {correct_usage}')

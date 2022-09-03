@@ -20,9 +20,9 @@ class MemberManagement(commands.Cog):
         await member.ban(reason=reason)
         await ctx.send(f'{member} is banned!')
 
-    async def cog_command_error(self, ctx, error: Exception) -> None:
-        if isinstance(error, commands.MissingPermissions):
-            await ctx.reply(f'{ctx.author} has no permission to {ctx.command.name} member!')
+    # async def cog_command_error(self, ctx, error: Exception) -> None:
+    #     if isinstance(error, commands.MissingPermissions):
+    #         await ctx.reply(f'{ctx.author} has no permission to {ctx.command.name} member!')
 
 async def setup(bot):
     await bot.add_cog(MemberManagement(bot))

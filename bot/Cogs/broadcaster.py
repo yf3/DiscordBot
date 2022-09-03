@@ -70,7 +70,7 @@ If a broadcast is already running, use bcstop then bdstart to apply the changes.
     @has_permissions(manage_guild=True)
     async def bcstart(self, ctx):
         if self.target_channel is None or self.text_message is None:
-            await ctx.reply('Broadcast target/message not set yet!\nUse \"!help Broadcaster\" for information.')
+            await ctx.reply('Broadcast not set yet!\nUse \"!help Broadcaster\" for information.')
         else:
             if self.scheduler.running:
                 await ctx.reply('Use !bdstop to shutdown current broadcast first.')
