@@ -1,8 +1,12 @@
+'''
+Current version the bot only have one broadcast job.
+'''
 from discord import utils
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from cron_validator import CronValidator
 
 class Broadcaster(commands.Cog):
     def __init__(self, bot) -> None:
@@ -10,25 +14,32 @@ class Broadcaster(commands.Cog):
         self.target_channel = None
         self.text_message = None
         self._default_cronexp = '*/1 * * * *'
+        self.custom_cronexp = None
+        self.scheduler = AsyncIOScheduler()
 
     # @tasks.loop(seconds=1.0, count=2)
     # async def broadcast_by_name(self):
     #     await self.target_channel.send(self.text_message)
 
-    async def broadcast_message(self):
+    async def do_broadcast(self):
         await self.target_channel.send(self.text_message)
 
     async def schedule_broadcast(self):
-        scheduler = AsyncIOScheduler()
-        scheduler.add_job(self.broadcast_message, CronTrigger.from_crontab(self._default_cronexp))
-        scheduler.start()
+        if self.custom_cronexp is None:
+            cron_exp = self._default_cronexp
+        else:
+            cron_exp = self.custom_cronexp
+        self.scheduler.add_job(self.do_broadcast, CronTrigger.from_crontab(cron_exp))
+        self.scheduler.start()
 
     @commands.command()
     @has_permissions(manage_guild=True)
     async def bdset(self, ctx, target_channel_name, target_guild_name = None):
         if target_guild_name is None:
             target_guild_name = ctx.guild.name
-        target_channel = utils.get(self.bot.get_all_channels(), guild__name=target_guild_name, name=target_channel_name)
+        target_channel = utils.get(self.bot.get_all_channels(),
+                                    guild__name=target_guild_name,
+                                    name=target_channel_name)
         if target_channel is None:
             await ctx.send(f'Channel {target_channel_name} not found.')
         else:
@@ -44,17 +55,35 @@ class Broadcaster(commands.Cog):
 
     @commands.command()
     @has_permissions(manage_guild=True)
-    async def bdtime(self, ctx, std_cron_expression):
-        # TODO: validate cron expression
-        pass
+    async def bdtime(self, ctx, *, cron_exp):
+        try:
+            CronValidator.parse(cron_exp)
+            self.custom_cronexp = cron_exp
+            await ctx.send('Successfully update broadcast routine as' + cron_exp)
+        except ValueError as exception:
+            await ctx.send(str(exception) +
+                            '. Correct expression ref:' +
+                            'https://www.ibm.com/docs/en/db2/11.5?topic=task-unix-cron-format')
 
     @commands.command()
     @has_permissions(manage_guild=True)
     async def bdstart(self, ctx):
         if self.target_channel is None or self.text_message is None:
-            await ctx.send("Broadcast target not set yet!")
+            await ctx.send('Broadcast target/message not set yet!')
         else:
-            await self.schedule_broadcast()
+            if self.scheduler.running:
+                await ctx.send('Use !bdstop to shutdown current broadcast first.')
+            else:
+                await self.schedule_broadcast()
+    
+    @commands.command()
+    @has_permissions(manage_guild=True)
+    async def bdstop(self, ctx):
+        if self.scheduler.running:
+            self.scheduler.shutdown()
+            await ctx.send('Broadcast is shutdown.')
+        else:
+            await ctx.send('No running broadcast.')
 
 async def setup(bot):
     await bot.add_cog(Broadcaster(bot))
