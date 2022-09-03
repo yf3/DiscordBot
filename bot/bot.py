@@ -9,13 +9,15 @@ class MyBot(commands.Bot):
         super().__init__(*args, **kwargs)
 
     async def on_ready(self):
+        await self.tree.sync()
         print('Bot ready.')
 
     async def on_command_error(self, ctx, error, /) -> None:
-        await ctx.send(error)
+        await ctx.reply(error)
+        print(error)
         if isinstance(error, commands.MissingRequiredArgument):
             correct_usage = f'{self.command_prefix}{ctx.command.name} {ctx.command.signature}'
-            await ctx.send(f'correct usage: {correct_usage}')
+            await ctx.reply(f'correct usage: {correct_usage}')
 
 async def add_cogs():
     for cog in [p.stem for p in Path('.').glob('*/Cogs/*.py')]:
