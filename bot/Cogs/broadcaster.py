@@ -10,10 +10,10 @@ from cron_validator import CronValidator
 
 class Broadcaster(commands.Cog, description=
 'This category requires the manage_guild permission to use.\n\n\
-Use bcset to select target channel and bctext to set broadcast \
+Use !bcset to select target channel and !bctext to set broadcast \
 message before using bcstart to start the broadcasting routine.\n\n\
-Default broadcast routine is 00:00 everyday, use bctime if you want to modify the schedule.\n\n\
-If a broadcast is already running, use bcstop then bdstart to apply the changes.'):
+Default broadcast routine is 00:00 everyday, use !bctime if you want to modify the schedule.\n\n\
+If a broadcast is already running, use !bcstop then !bdstart to apply the changes.'):
     def __init__(self, bot) -> None:
         self.bot = bot
         self.target_channel = None
@@ -70,7 +70,7 @@ If a broadcast is already running, use bcstop then bdstart to apply the changes.
     @has_permissions(manage_guild=True)
     async def bcstart(self, ctx):
         if self.target_channel is None or self.text_message is None:
-            await ctx.reply('Broadcast not set yet!\nUse \"!help Broadcaster\" for information.')
+            await ctx.reply('Broadcast not set yet!\nUse \"!help Broadcaster\" for usages.')
         else:
             if self.scheduler.running:
                 await ctx.reply('Use !bdstop to shutdown current broadcast first.')

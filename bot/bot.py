@@ -1,37 +1,46 @@
 import asyncio
 from pathlib import Path
+import logging
 import discord
 from discord.ext import commands
 from decouple import config
 
 class MyBot(commands.Bot):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, command_prefix: str, *, intents: discord.Intents) -> None:
+        super().__init__(command_prefix, intents=intents)
+
+    def _log_error(self, error: Exception):
+        logging.log(logging.ERROR, error)
+        logging.log(logging.ERROR, error.__class__)
 
     async def on_ready(self):
-        print('Bot ready.')
+        logging.log(logging.INFO, 'Bot ready.')
 
     async def on_command_error(self, ctx, error: Exception, /) -> None:
         await ctx.reply(error)
-        print(error.__class__)
+        self._log_error(error)
         if isinstance(error, commands.MissingRequiredArgument):
             correct_usage = f'{self.command_prefix}{ctx.command.name} {ctx.command.signature}'
             await ctx.reply(f'correct usage: {correct_usage}')
 
-async def add_cogs():
+async def add_cogs(bot):
     for cog in [p.stem for p in Path('.').glob('*/Cogs/*.py')]:
         try:
             await bot.load_extension(f'Cogs.{cog}')
         except commands.NoEntryPointError:
             continue
 
-async def main():
-    await add_cogs()
-    await bot.start(config('DISCORD_BOT_TOKEN'))
-
-if __name__== '__main__':
+def get_intents():
     intents = discord.Intents.all()
     intents.presences = False
     intents.typing = False
-    bot = MyBot(command_prefix='!', intents=intents)
+    return intents
+
+async def main():
+    bot = MyBot(command_prefix='!', intents=get_intents())
+    await add_cogs(bot)
+    await bot.start(config('DISCORD_BOT_TOKEN'))
+
+if __name__== '__main__':
+    discord.utils.setup_logging(level=logging.INFO)
     asyncio.run(main())
