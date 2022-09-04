@@ -37,10 +37,10 @@ def get_intents():
     return intents
 
 async def main():
+    discord.utils.setup_logging(level=logging.INFO)
     bot = MyBot(command_prefix='!', intents=get_intents())
     await add_cogs(bot)
     await bot.start(config('DISCORD_BOT_TOKEN'))
 
 if __name__== '__main__':
-    discord.utils.setup_logging(level=logging.INFO)
     asyncio.run(main())

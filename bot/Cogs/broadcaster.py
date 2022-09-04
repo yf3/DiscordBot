@@ -1,7 +1,7 @@
 '''
 Current version the bot can only have one broadcast job.
 '''
-from discord import utils
+from discord import utils, Embed
 from discord.ext import commands
 from discord.ext.commands import has_permissions
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -10,8 +10,9 @@ from cron_validator import CronValidator
 
 class Broadcaster(commands.Cog, description=
 'This category requires the manage_guild permission to use.\n\n\
-Use !bcset to select target channel and !bctext to set broadcast \
-message before using bcstart to start the broadcasting routine.\n\n\
+Use **!bcinfo to check current settings of broadcast. Before calling \
+**!bcstart** to start the broadcasting routine, use **!bcset** to \
+select target channel and !bctext to set broadcast message \n\n\
 Default broadcast routine is 00:00 everyday, use !bctime if you want to modify the schedule.\n\n\
 If a broadcast is already running, use !bcstop then !bdstart to apply the changes.'):
     def __init__(self, bot) -> None:
@@ -22,16 +23,29 @@ If a broadcast is already running, use !bcstop then !bdstart to apply the change
         self.custom_cronexp = None
         self.scheduler = AsyncIOScheduler()
 
+    def _get_current_cron(self):
+        if self.custom_cronexp is None:
+            return self._default_cronexp
+        else:
+            return self.custom_cronexp
+
     async def do_broadcast(self):
         await self.target_channel.send(self.text_message)
 
     async def schedule_broadcast(self):
-        if self.custom_cronexp is None:
-            cron_exp = self._default_cronexp
-        else:
-            cron_exp = self.custom_cronexp
+        cron_exp = self._get_current_cron()
         self.scheduler.add_job(self.do_broadcast, CronTrigger.from_crontab(cron_exp))
         self.scheduler.start()
+
+    @commands.command(description='Display current broadcast settings')
+    @has_permissions(manage_guild=True)
+    async def bcinfo(self, ctx):
+        embed = Embed(title='Current Broadcast Settings')
+        embed.add_field(name='**Target Channel**', value=self.target_channel, inline=False)
+        embed.add_field(name='**Cron Schedule**', value=self._get_current_cron(), inline=False)
+        embed.add_field(name='**Message**', value=self.text_message, inline=False)
+        embed.add_field(name='**Running**', value=self.scheduler.running)
+        await ctx.reply(embed=embed)
 
     @commands.command(description='If target_guild_name is not given, it will choose the current guild.')
     @has_permissions(manage_guild=True)
@@ -70,10 +84,10 @@ If a broadcast is already running, use !bcstop then !bdstart to apply the change
     @has_permissions(manage_guild=True)
     async def bcstart(self, ctx):
         if self.target_channel is None or self.text_message is None:
-            await ctx.reply('Broadcast not set yet!\nUse \"!help Broadcaster\" for usages.')
+            await ctx.reply('Broadcast not set yet!\nUse **!help Broadcaster** for usages.')
         else:
             if self.scheduler.running:
-                await ctx.reply('Use !bdstop to shutdown current broadcast first.')
+                await ctx.reply('Use **!bcstop** to shutdown current broadcast first.')
             else:
                 await self.schedule_broadcast()
 
