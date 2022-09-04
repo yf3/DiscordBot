@@ -6,14 +6,14 @@ class MemberManagement(commands.Cog):
     def __init__(self, bot) -> None:
         self.bot = bot
 
-    @commands.command()
+    @commands.command(description='Kick out a tagged-member from current server.')
     @has_permissions(kick_members=True)
     async def kick(self, ctx, member: Member = commands.parameter(description=' - Tag a member'),
                      *, reason: str=  commands.parameter(default=None, description='(Optional)')):
         await member.kick(reason=reason)
         await ctx.send(f'{member} is out!')
 
-    @commands.command()
+    @commands.command('Ban a tagged-member from current server.')
     @has_permissions(ban_members=True)
     async def ban(self, ctx, member: Member = commands.parameter(description=' - Tag a member'),
                      *, reason: str=  commands.parameter(default=None, description='(Optional)')):

@@ -9,10 +9,10 @@ from apscheduler.triggers.cron import CronTrigger
 from cron_validator import CronValidator
 
 class Broadcaster(commands.Cog, description=
-'The commands in this category requires the manage_guild permission.\n\n\
-Use !bcinfo to check current settings of broadcast. Before calling \
-!bcstart to start the broadcasting routine, use !bcset to \
-select target channel and !bctext to set broadcast message \n\n\
+'Make the bot auto sending text message to a given channel according to a given cron expression. \
+The commands in this category requires the manage_guild permission.\n\n\
+Use !bcinfo to check current settings of broadcast. Before calling !bcstart to start the \
+broadcasting routine, use !bcset to select target channel and !bctext to set broadcast message \n\n\
 Default broadcast routine is 00:00 everyday, use !bctime if you want to modify the schedule.\n\n\
 If a broadcast is already running, use !bcstop then !bdstart to apply the changes.'):
     def __init__(self, bot) -> None:
