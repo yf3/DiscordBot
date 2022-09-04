@@ -13,7 +13,7 @@ Type !help to get the full list of commands in discord:
 - `!newchannel` [channel_name]
     - Add a new text channel to current guild. The channel_name will be 'new-channel' if not given.
 
-### The Interaction Category
+### The MemberManagement Category
 
 - `!kick` \<member\> [reason]
     - Kick out a tagged-member from current server.
