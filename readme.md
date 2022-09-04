@@ -1,21 +1,24 @@
 ## Bot Command Usage
 
-Commands prefix: `!` (halfwidth)
+Command prefix: `!` (halfwidth)
 
 Type !help to get the full list of commands in discord:
 
 ![!help](./figs/defaultHelp.png)
 
-### Commands (The Interaction and MemberManagement Category)
+### The Interaction Category
 
-- !echo <message_content>
+- `!echo` <message_content>
     - Making the bot reply a message to you with <message_content>.
-- !newchannel [channel_name]
+- `!newchannel` [channel_name]
     - Add a new text channel to current guild. The channel_name will be 'new-channel' if not given.
-- kick <member> [reason]
+
+### The Interaction Category
+
+- `!kick` \<member\> [reason]
     - Kick out a tagged-member from current server.
     - Requires permission from the command sender.
-- ban <member> [reason]
+- `!ban` \<member\> [reason]
     - Ban a tagged-member from current server.
     - Requires permission from the command sender.
 
@@ -35,7 +38,7 @@ Type !help Broadcaster in channel to get the usage description from bot:
     - To set the target channel
     - If target_guild_name is not given, it will choose the current guild.
 
-- '!bctext' <message_content>
+- `!bctext` <message_content>
     - Set the message you want to broadcast.
 
 - `!bctime` <cron_exp>
