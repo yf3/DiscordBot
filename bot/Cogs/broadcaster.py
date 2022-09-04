@@ -9,9 +9,9 @@ from apscheduler.triggers.cron import CronTrigger
 from cron_validator import CronValidator
 
 class Broadcaster(commands.Cog, description=
-'This category requires the manage_guild permission to use.\n\n\
-Use **!bcinfo to check current settings of broadcast. Before calling \
-**!bcstart** to start the broadcasting routine, use **!bcset** to \
+'The commands in this category requires the manage_guild permission.\n\n\
+Use !bcinfo to check current settings of broadcast. Before calling \
+!bcstart to start the broadcasting routine, use !bcset to \
 select target channel and !bctext to set broadcast message \n\n\
 Default broadcast routine is 00:00 everyday, use !bctime if you want to modify the schedule.\n\n\
 If a broadcast is already running, use !bcstop then !bdstart to apply the changes.'):
@@ -84,7 +84,7 @@ If a broadcast is already running, use !bcstop then !bdstart to apply the change
     @has_permissions(manage_guild=True)
     async def bcstart(self, ctx):
         if self.target_channel is None or self.text_message is None:
-            await ctx.reply('Broadcast not set yet!\nUse **!help Broadcaster** for usages.')
+            await ctx.reply('Broadcast not set yet. Use **!bcinfo** to check broadcast settings and **!help Broadcaster** for usages.')
         else:
             if self.scheduler.running:
                 await ctx.reply('Use **!bcstop** to shutdown current broadcast first.')
