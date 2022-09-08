@@ -5,7 +5,7 @@ class Interactions(commands.Cog):
         self.bot = bot
 
     @commands.command(description='Making the bot reply a message to you with <message_content>.')
-    async def echo(self, ctx, message_content: str = commands.parameter(description=' - Any text')):
+    async def echo(self, ctx, *, message_content: str = commands.parameter(description=' - Any text')):
         await ctx.reply(f'{message_content}')
 
     @commands.command(description=
